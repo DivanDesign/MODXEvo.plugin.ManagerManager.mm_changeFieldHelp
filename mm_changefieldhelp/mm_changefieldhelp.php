@@ -36,7 +36,18 @@ function mm_changeFieldHelp($field, $helptext = '', $roles = '', $templates = ''
 			
 			//Is this TV?
 			if ($mm_fields[$field]['tv']){
-				$output .= '$j("'.$fieldtype.'[name=\''.$fieldname.'\']").parents("td:first").prev("td").children("span.comment").html("'.jsSafe($helptext).'");';
+				$output .= '
+var $mm_changeFieldHelp_title = $j("'.$fieldtype.'[name=\''.$fieldname.'\']").parents("td:first").prev("td"),
+	$mm_changeFieldHelp_title_comment = $mm_changeFieldHelp_title.children("span.comment");
+
+if ($mm_changeFieldHelp_title_comment.length == 0){
+	$mm_changeFieldHelp_title.append("<br />");
+	$mm_changeFieldHelp_title_comment = $j("<span class=\'comment\'></span>").appendTo($mm_changeFieldHelp_title);
+}
+
+$mm_changeFieldHelp_title_comment.html("'.jsSafe($helptext).'");
+				';
+				
 				//Or document field
 			}else{
 				// Give the help button an ID, and modify the alt/title text
