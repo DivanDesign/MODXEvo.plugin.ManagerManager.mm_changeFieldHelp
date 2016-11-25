@@ -49,20 +49,33 @@ function mm_changeFieldHelp(
 			if ($mm_fields[$field]['tv']){
 				$output .=
 '
-var $mm_changeFieldHelp_title = $j("'.$fieldtype.'[name=\''.$fieldname.'\']").parents("td:first").prev("td"),
-	$mm_changeFieldHelp_title_comment = $mm_changeFieldHelp_title.children("span.comment");
-
-if ($mm_changeFieldHelp_title_comment.length == 0){
-	$mm_changeFieldHelp_title.append("<br />");
-	$mm_changeFieldHelp_title_comment = $j("<span class=\'comment\'></span>").appendTo($mm_changeFieldHelp_title);
-}
-
-$mm_changeFieldHelp_title_comment.html("'.$helptext.'");
+$j("'.$fieldtype.'[name=\''.$fieldname.'\']").each(function(){
+	var $this = $j(this),
+		$parent = $this.parents("td:first").prev("td"),
+		$parent_comment = $parent.find("span.comment");
+	
+	if ($parent_comment.length == 0){
+		$parent.append("<br />");
+		$parent_comment = $j("<span class=\'comment\'></span>").appendTo($parent);
+	}
+	
+	$parent_comment.html("'.$helptext.'");
+});
 ';
 			//Or document field
 			}else{
 				// Give the help button an ID, and modify the alt/title text
-				$output .= '$j("'.$fieldtype.'[name=\''.$fieldname.'\']").siblings("img[style*=\'cursor:help\']").attr("id", "'.$fieldname.'-help").attr("alt", "'.$helptext.'").attr("title", "'.$helptext.'");'.PHP_EOL;
+				$output .=
+'
+$j("'.$fieldtype.'[name=\''.$fieldname.'\']").each(function(){
+	var $this = $j(this),
+		$helpIcon = $this.siblings("img[style*=\'cursor:help\']");
+	
+	$helpIcon.attr("id", "'.$fieldname.'-help");
+	$helpIcon.attr("alt", "'.$helptext.'");
+	$helpIcon.attr("title", "'.$helptext.'");
+});
+';
 			}
 		}
 		
