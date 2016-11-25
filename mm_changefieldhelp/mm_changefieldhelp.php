@@ -7,7 +7,7 @@
  * 
  * @uses MODXEvo.plugin.ManagerManager >= 0.7.
  * 
- * @param $field {string} — The name of the document field (or TV) this should apply to. @required
+ * @param $fields {string_commaSeparated} — The name(s) of the document field (or TV) this should apply to. @required
  * @param $helptext {string_html} — The new help text. @required
  * @param $roles {string_commaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $templates {string_commaSeparated} — Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
@@ -18,7 +18,7 @@
  */
 
 function mm_changeFieldHelp(
-	$field,
+	$fields,
 	$helptext = '',
 	$roles = '',
 	$templates = ''
@@ -33,46 +33,39 @@ function mm_changeFieldHelp(
 		$e->name == 'OnDocFormRender' &&
 		useThisRule($roles, $templates)
 	){
-		global $mm_fields;
-		
 		$output = '//---------- mm_changeFieldHelp :: Begin -----'.PHP_EOL;
 		
-		// What type is this field?
-		if (isset($mm_fields[$field])){
-			// Clean up for js output
-			$helptext = ddTools::escapeForJS($helptext);
+		// Clean up for js output
+		$helptext = ddTools::escapeForJS($helptext);
+		
+		$output .=
+'
+$j.each($j.ddMM.makeArray("'.$fields.'"), function(){
+	var field = $j.ddMM.fields[this];
+	
+	//If the field exists
+	if ($j.isPlainObject(field)){
+		//Is this TV?
+		if (field.tv){
+			var $parent = field.$elem.parents("td:first").prev("td"),
+				$parent_comment = $parent.find("span.comment");
 			
-			//Is this TV?
-			if ($mm_fields[$field]['tv']){
-				$output .=
-'
-$j.ddMM.fields.'.$field.'.$elem.each(function(){
-	var $this = $j(this),
-		$parent = $this.parents("td:first").prev("td"),
-		$parent_comment = $parent.find("span.comment");
-	
-	if ($parent_comment.length == 0){
-		$parent.append("<br />");
-		$parent_comment = $j("<span class=\'comment\'></span>").appendTo($parent);
-	}
-	
-	$parent_comment.html("'.$helptext.'");
-});
-';
-			//Or document field
-			}else{
-				$output .=
-'
-$j.ddMM.fields.'.$field.'.$elem.each(function(){
-	var $this = $j(this),
-		$helpIcon = $this.siblings("img[style*=\'cursor:help\']");
-	
-	$helpIcon.attr("alt", "'.$helptext.'");
-	$helpIcon.attr("title", "'.$helptext.'");
-});
-';
+			if ($parent_comment.length == 0){
+				$parent.append("<br />");
+				$parent_comment = $j("<span class=\'comment\'></span>").appendTo($parent);
 			}
+			
+			$parent_comment.html("'.$helptext.'");
+		//Or document field
+		}else{
+			var $helpIcon = field.$elem.siblings("img[style*=\'cursor:help\']");
+			
+			$helpIcon.attr("alt", "'.$helptext.'");
+			$helpIcon.attr("title", "'.$helptext.'");
 		}
+	}
+});
+';
 		
 		$output .= '//---------- mm_changeFieldHelp :: End -----'.PHP_EOL;
 		
