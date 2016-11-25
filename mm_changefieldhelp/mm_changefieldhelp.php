@@ -5,10 +5,10 @@
  * 
  * @desc A widget for ManagerManager plugin that allows to change help text that appears near each document field when the icon or comment below template variable is hovered.
  * 
- * @uses MODXEvo.plugin.ManagerManager >= 0.5.
+ * @uses MODXEvo.plugin.ManagerManager >= 0.7.
  * 
  * @param $field {string} — The name of the document field (or TV) this should apply to. @required
- * @param $helptext {string} — The new help text. @required
+ * @param $helptext {string_html} — The new help text. @required
  * @param $roles {string_commaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $templates {string_commaSeparated} — Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
  * 
@@ -42,6 +42,9 @@ function mm_changeFieldHelp(
 			$fieldtype = $mm_fields[$field]['fieldtype'];
 			$fieldname = $mm_fields[$field]['fieldname'];
 			
+			// Clean up for js output
+			$helptext = ddTools::escapeForJS($helptext);
+			
 			//Is this TV?
 			if ($mm_fields[$field]['tv']){
 				$output .=
@@ -54,12 +57,12 @@ if ($mm_changeFieldHelp_title_comment.length == 0){
 	$mm_changeFieldHelp_title_comment = $j("<span class=\'comment\'></span>").appendTo($mm_changeFieldHelp_title);
 }
 
-$mm_changeFieldHelp_title_comment.html("'.addslashes($helptext).'");
+$mm_changeFieldHelp_title_comment.html("'.$helptext.'");
 ';
 			//Or document field
 			}else{
 				// Give the help button an ID, and modify the alt/title text
-				$output .= '$j("'.$fieldtype.'[name=\''.$fieldname.'\']").siblings("img[style*=\'cursor:help\']").attr("id", "'.$fieldname.'-help").attr("alt", "'.addslashes($helptext).'").attr("title", "'.addslashes($helptext).'");'.PHP_EOL;
+				$output .= '$j("'.$fieldtype.'[name=\''.$fieldname.'\']").siblings("img[style*=\'cursor:help\']").attr("id", "'.$fieldname.'-help").attr("alt", "'.$helptext.'").attr("title", "'.$helptext.'");'.PHP_EOL;
 			}
 		}
 		
