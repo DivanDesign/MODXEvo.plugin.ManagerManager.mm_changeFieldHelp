@@ -8,7 +8,7 @@
  * @uses MODXEvo.plugin.ManagerManager >= 0.7.
  * 
  * @param $fields {string_commaSeparated} — The name(s) of the document field (or TV) this should apply to. @required
- * @param $helpText {string_html} — The new help text. @required
+ * @param $helpText {string_html} — The new help text. If equals to '', help element will be hidden. @required
  * @param $roles {string_commaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $templates {string_commaSeparated} — Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
  * 
@@ -26,8 +26,6 @@ function mm_changeFieldHelp(
 	global $modx;
 	$e = &$modx->Event;
 	
-	if ($helpText == ''){return;}
-	
 	// if the current page is being edited by someone in the list of roles, and uses a template in the list of templates
 	if (
 		$e->name == 'OnDocFormRender' &&
@@ -41,7 +39,8 @@ function mm_changeFieldHelp(
 		$output .=
 '
 $j.each($j.ddMM.makeArray("'.$fields.'"), function(){
-	var field = $j.ddMM.fields[this];
+	var field = $j.ddMM.fields[this],
+		helpText = "'.$helpText.'";
 	
 	//If the field exists
 	if ($j.isPlainObject(field)){
@@ -50,18 +49,26 @@ $j.each($j.ddMM.makeArray("'.$fields.'"), function(){
 			var $parent = field.$elem.parents("td:first").prev("td"),
 				$parent_comment = $parent.find("span.comment");
 			
-			if ($parent_comment.length == 0){
-				$parent.append("<br />");
-				$parent_comment = $j("<span class=\'comment\'></span>").appendTo($parent);
+			if (helpText != ""){
+				if ($parent_comment.length == 0){
+					$parent.append("<br />");
+					$parent_comment = $j("<span class=\'comment\'></span>").appendTo($parent);
+				}
+				
+				$parent_comment.html(helpText);
+			}else{
+				$parent_comment.hide();
 			}
-			
-			$parent_comment.html("'.$helpText.'");
 		//Or document field
 		}else{
 			var $helpIcon = field.$elem.siblings("img[style*=\'cursor:help\']");
 			
-			$helpIcon.attr("alt", "'.$helpText.'");
-			$helpIcon.attr("title", "'.$helpText.'");
+			if (helpText != ""){
+				$helpIcon.attr("alt", helpText);
+				$helpIcon.attr("title", helpText);
+			}else{
+				$helpIcon.hide();
+			}
 		}
 	}
 });
