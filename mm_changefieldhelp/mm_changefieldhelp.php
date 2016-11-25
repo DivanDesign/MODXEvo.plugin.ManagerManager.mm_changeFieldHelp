@@ -39,9 +39,6 @@ function mm_changeFieldHelp(
 		
 		// What type is this field?
 		if (isset($mm_fields[$field])){
-			$fieldtype = $mm_fields[$field]['fieldtype'];
-			$fieldname = $mm_fields[$field]['fieldname'];
-			
 			// Clean up for js output
 			$helptext = ddTools::escapeForJS($helptext);
 			
@@ -49,7 +46,7 @@ function mm_changeFieldHelp(
 			if ($mm_fields[$field]['tv']){
 				$output .=
 '
-$j("'.$fieldtype.'[name=\''.$fieldname.'\']").each(function(){
+$j.ddMM.fields.'.$field.'.$elem.each(function(){
 	var $this = $j(this),
 		$parent = $this.parents("td:first").prev("td"),
 		$parent_comment = $parent.find("span.comment");
@@ -64,14 +61,12 @@ $j("'.$fieldtype.'[name=\''.$fieldname.'\']").each(function(){
 ';
 			//Or document field
 			}else{
-				// Give the help button an ID, and modify the alt/title text
 				$output .=
 '
-$j("'.$fieldtype.'[name=\''.$fieldname.'\']").each(function(){
+$j.ddMM.fields.'.$field.'.$elem.each(function(){
 	var $this = $j(this),
 		$helpIcon = $this.siblings("img[style*=\'cursor:help\']");
 	
-	$helpIcon.attr("id", "'.$fieldname.'-help");
 	$helpIcon.attr("alt", "'.$helptext.'");
 	$helpIcon.attr("title", "'.$helptext.'");
 });
