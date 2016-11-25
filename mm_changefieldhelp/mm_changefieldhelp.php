@@ -8,7 +8,7 @@
  * @uses MODXEvo.plugin.ManagerManager >= 0.7.
  * 
  * @param $fields {string_commaSeparated} — The name(s) of the document field (or TV) this should apply to. @required
- * @param $helptext {string_html} — The new help text. @required
+ * @param $helpText {string_html} — The new help text. @required
  * @param $roles {string_commaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $templates {string_commaSeparated} — Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
  * 
@@ -19,14 +19,14 @@
 
 function mm_changeFieldHelp(
 	$fields,
-	$helptext = '',
+	$helpText = '',
 	$roles = '',
 	$templates = ''
 ){
 	global $modx;
 	$e = &$modx->Event;
 	
-	if ($helptext == ''){return;}
+	if ($helpText == ''){return;}
 	
 	// if the current page is being edited by someone in the list of roles, and uses a template in the list of templates
 	if (
@@ -36,7 +36,7 @@ function mm_changeFieldHelp(
 		$output = '//---------- mm_changeFieldHelp :: Begin -----'.PHP_EOL;
 		
 		// Clean up for js output
-		$helptext = ddTools::escapeForJS($helptext);
+		$helpText = ddTools::escapeForJS($helpText);
 		
 		$output .=
 '
@@ -55,13 +55,13 @@ $j.each($j.ddMM.makeArray("'.$fields.'"), function(){
 				$parent_comment = $j("<span class=\'comment\'></span>").appendTo($parent);
 			}
 			
-			$parent_comment.html("'.$helptext.'");
+			$parent_comment.html("'.$helpText.'");
 		//Or document field
 		}else{
 			var $helpIcon = field.$elem.siblings("img[style*=\'cursor:help\']");
 			
-			$helpIcon.attr("alt", "'.$helptext.'");
-			$helpIcon.attr("title", "'.$helptext.'");
+			$helpIcon.attr("alt", "'.$helpText.'");
+			$helpIcon.attr("title", "'.$helpText.'");
 		}
 	}
 });
