@@ -1,9 +1,9 @@
 <?php
 /**
  * mm_changeFieldHelp
- * @version 1.1.2 (2014-05-07)
+ * @version 1.2 (2016-11-26)
  * 
- * @desc A widget for ManagerManager plugin that allows to change help text that appears near each document field when the icon or comment below template variable is hovered.
+ * @desc A widget for ManagerManager plugin that allows to change or hide help text that appears near each document field when the icon is hovered or comment below template variable.
  * 
  * @uses PHP >= 5.4.
  * @uses MODXEvo.plugin.ManagerManager >= 0.7.
@@ -14,9 +14,9 @@
  * @param $params['roles'] {string_commaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $params['templates'] {string_commaSeparated} — Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
  * 
- * @link http://code.divandesign.biz/modx/mm_changefieldhelp/1.1.2
+ * @link http://code.divandesign.biz/modx/mm_changefieldhelp/1.2
  * 
- * @copyright 2012–2014
+ * @copyright 2012–2016 DivanDesign {@link http://www.DivanDesign.biz }
  */
 
 function mm_changeFieldHelp($params){
@@ -53,13 +53,12 @@ function mm_changeFieldHelp($params){
 		$e->name == 'OnDocFormRender' &&
 		useThisRule($params->roles, $params->templates)
 	){
-		$output = '//---------- mm_changeFieldHelp :: Begin -----'.PHP_EOL;
-		
 		// Clean up for js output
 		$params->helpText = ddTools::escapeForJS($params->helpText);
 		
-		$output .=
+		$output =
 '
+//---------- mm_changeFieldHelp :: Begin -----
 $j.each($j.ddMM.makeArray("'.$params->fields.'"), function(){
 	var field = $j.ddMM.fields[this],
 		helpText = "'.$params->helpText.'";
@@ -94,9 +93,8 @@ $j.each($j.ddMM.makeArray("'.$params->fields.'"), function(){
 		}
 	}
 });
+//---------- mm_changeFieldHelp :: End -----
 ';
-		
-		$output .= '//---------- mm_changeFieldHelp :: End -----'.PHP_EOL;
 		
 		$e->output($output);
 	}
